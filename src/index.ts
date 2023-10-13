@@ -3,16 +3,26 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import usersRouter from './v1/controllers/UserController'
 
-// Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { firebaseConfig } from '../firebaseSecret'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth, signInAnonymously } from 'firebase/auth'
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig)
 const db = getFirestore(firebaseApp)
+const auth = getAuth(firebaseApp)
+
+signInAnonymously(auth)
+    .then((res) => {
+        console.log('anonynous sign in success')
+    })
+    .catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+
+        throw new Error(`Error: ${errorCode} - ${errorMessage}`)
+    })
 
 dotenv.config()
 
