@@ -1,18 +1,29 @@
 import { Router } from 'express';
-import { Firestore, doc, getDoc } from 'firebase/firestore';
+import { Firestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
 const WorkoutController = async (db: Firestore) => {
     const router = Router();
 
+    const userId = '6urOxvgJCsYFv0ZaIY2IG1lx7ZC2'; //Test user id
+
     router
         .route('/workouts')
         // to create new resources
-        .post((req, res, next) => {
-            res.send('POST request to the homepage');
+        .post(async (req, res, next) => {
+            await setDoc(doc(db, 'Workouts', userId), {
+                ...req.body,
+            })
+                .then(() => {
+                    console.log('Document successfully written!');
+                    res.send('success');
+                })
+                .catch((error) => {
+                    console.error('Error writing document: ', error);
+                    res.status(500).send('error');
+                });
         })
         // to retrieve resource
         .get(async (req, res, next) => {
-            const userId = '6urOxvgJCsYFv0ZaIY2IG1lx7ZC2'; //Test user id
             const docRef = doc(db, 'Workouts', userId);
             const docSnap = await getDoc(docRef);
 
