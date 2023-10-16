@@ -1,41 +1,39 @@
-import { Router } from 'express'
-import { Firestore, collection, getDocs } from 'firebase/firestore'
+import { Router } from 'express';
+import { Firestore, collection, getDocs } from 'firebase/firestore';
 
-const UserWrapper = (db: Firestore) => {
-    const userRef = collection(db, 'users')
-
-    const router = Router()
+const UserController = async (db: Firestore) => {
+    const router = Router();
 
     router
         .route('/users')
         // to create new resources
         .post((req, res, next) => {
-            res.send('POST request to the homepage')
+            res.send('POST request to the homepage');
         })
         // to retrieve resource
         .get(async (req, res, next) => {
-            console.log('get users')
+            console.log('get users');
 
-            const querySnapshot = await getDocs(collection(db, 'Users'))
+            const querySnapshot = await getDocs(collection(db, 'Users'));
 
-            let users: any[] = []
+            let users: any[] = [];
 
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, ' => ', doc.data())
-                users.push(doc.data())
-            })
+                console.log(doc.id, ' => ', doc.data());
+                users.push(doc.data());
+            });
 
-            res.send(users)
-        })
+            res.send(users);
+        });
     router
         .route('/users/:userId')
         // to retrieve a single resource
         .get((req, res, next) => {
-            res.send('GET request to the homepage')
-        })
+            res.send('GET request to the homepage');
+        });
 
-    return router
-}
+    return router;
+};
 
-export default UserWrapper
+export default UserController;
