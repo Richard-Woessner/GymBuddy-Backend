@@ -8,6 +8,7 @@ import { firebaseConfig } from '../firebaseSecret';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import WorkoutController from './v1/controllers/WorkoutController';
 import UserController from './v1/controllers/UserController';
+import FirebaseController from './v1/controllers/FirebaseController';
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
@@ -42,6 +43,9 @@ UserController(db).then((router) => {
     app.use('/api', router);
 });
 WorkoutController(db).then((router) => {
+    app.use('/api', router);
+});
+FirebaseController(db).then((router) => {
     app.use('/api', router);
 });
 
