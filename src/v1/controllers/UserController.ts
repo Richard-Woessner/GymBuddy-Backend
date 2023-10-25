@@ -1,5 +1,12 @@
 import { Router } from 'express';
-import { Firestore, collection, getDocs } from 'firebase/firestore';
+import {
+    Firestore,
+    collection,
+    doc,
+    getDocs,
+    setDoc,
+} from 'firebase/firestore';
+import { PostUserRequest } from '../models/UserModels';
 
 const UserController = async (db: Firestore) => {
     const router = Router();
@@ -7,8 +14,22 @@ const UserController = async (db: Firestore) => {
     router
         .route('/users')
         // to create new resources
-        .post((req, res, next) => {
-            res.send('POST request to the homepage');
+        .post(async (req, res, next) => {
+            const request = req.body as PostUserRequest;
+
+            const docId = crypto.randomUUID();
+
+            await setDoc(doc(db, 'Users', docId), {
+                ...request,
+            })
+                .then(() => {
+                    console.log('Document successfully written!');
+                    res.send('success');
+                })
+                .catch((error) => {
+                    console.error('Error writing document: ', error);
+                    res.status(500).send('error');
+                });
         })
         // to retrieve resource
         .get(async (req, res, next) => {

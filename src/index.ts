@@ -13,18 +13,6 @@ import FirebaseController from './v1/controllers/FirebaseController';
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
-const auth = getAuth(firebaseApp);
-
-signInAnonymously(auth)
-    .then((res) => {
-        console.log('anonynous sign in success');
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        throw new Error(`Error: ${errorCode} - ${errorMessage}`);
-    });
 
 dotenv.config();
 
@@ -42,9 +30,11 @@ app.use(cors({ origin: ['http://localhost:8081', 'https://origin2.com'] }));
 UserController(db).then((router) => {
     app.use('/api', router);
 });
+
 WorkoutController(db).then((router) => {
     app.use('/api', router);
 });
+
 FirebaseController(db).then((router) => {
     app.use('/api', router);
 });
