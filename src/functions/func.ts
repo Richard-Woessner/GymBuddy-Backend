@@ -14,3 +14,12 @@ export const log = (message: string, color?: string) => {
         `background: #222; color: ${color || '#bada55'}`
     );
 };
+
+export const urlParamsToArray = (url: string): any[] => {
+    const params = url?.split('?')[1];
+
+    return params?.split('&').map((param) => {
+        const [key, value] = param.split('=');
+        return { [key]: value };
+    });
+};

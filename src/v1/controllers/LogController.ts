@@ -6,6 +6,7 @@ import {
     doc,
     getDoc,
     getDocs,
+    onSnapshot,
     query,
     setDoc,
     where,
@@ -116,6 +117,30 @@ const LogsController = async (db: Firestore) => {
                     .finally(() => {
                         res.send(logsArr[0]);
                     });
+            })
+            .delete(async (req, res, next) => {
+                const userId = req.query['userId'] as string;
+
+                let subCollectionDocs = collection(
+                    db,
+                    'Logs',
+                    'BAj2cq8yfrXsKAAg3bY7',
+                    'CompletedWorkouts'
+                );
+
+                //Testing firebase onSnapshot
+
+                const unsub = onSnapshot(subCollectionDocs, (docs) => {
+                    const tempSubDocs: any[] = [];
+
+                    docs.forEach((doc) => {
+                        tempSubDocs.push(doc.data());
+                    });
+
+                    log(Date.now().toLocaleString(), '#bada55');
+
+                    log(JSON.stringify(tempSubDocs, null, 2));
+                });
             });
     } catch (error) {
         console.error(error);

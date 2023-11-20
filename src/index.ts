@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from 'express';
+import ws from 'ws';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
@@ -10,6 +11,8 @@ import WorkoutController from './v1/controllers/WorkoutController';
 import UserController from './v1/controllers/UserController';
 import FirebaseController from './v1/controllers/FirebaseController';
 import LogsController from './v1/controllers/LogController';
+import WebSocketWrapper from './v1/WebSocket';
+import { urlParamsToArray } from './functions/func';
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
@@ -19,6 +22,14 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
+
+const wsServer = new ws.Server({ noServer: true });
+
+wsServer.on('connection', (socket, incoming) => {
+    const params = urlParamsToArray(incoming.url!);
+
+    WebSocketWrapper(socket, params);
+});
 
 // parses incoming requests with JSON payloads
 app.use(express.json());
@@ -48,6 +59,12 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Express + TypeScript Server');
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+});
+
+server.on('upgrade', (request, socket, head) => {
+    wsServer.handleUpgrade(request, socket, head, (socket) => {
+        wsServer.emit('connection', socket, request);
+    });
 });
