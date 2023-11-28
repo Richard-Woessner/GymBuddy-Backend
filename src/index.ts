@@ -34,7 +34,15 @@ wsServer.on('connection', (socket, incoming) => {
 // parses incoming requests with JSON payloads
 app.use(express.json());
 
-app.use(cors({ origin: ['http://localhost:8081', 'https://origin2.com'] }));
+app.use(
+    cors({
+        origin: [
+            'http://localhost:8081',
+            'http://localhost:3000',
+            'https://origin2.com',
+        ],
+    })
+);
 
 /**
  * Routes.

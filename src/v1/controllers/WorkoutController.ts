@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Firestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { GetWorkoutsResponse } from '../models/Workouts';
 
 const WorkoutController = async (db: Firestore) => {
     const router = Router();
@@ -35,6 +36,39 @@ const WorkoutController = async (db: Firestore) => {
 
                 if (docSnap.exists()) {
                     res.send(docSnap.data());
+                } else {
+                    res.status(404).send('Workout not found');
+                }
+            })
+            // to retrieve resource
+            .patch(async (req, res, next) => {
+                //TODO: Validate request
+
+                console.log(req.body);
+
+                const docId = req.query['userId'] as string;
+
+                const docRef = doc(db, 'Workouts', req.body.userId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    // res.send(docSnap.data());
+
+                    const data = docSnap.data() as GetWorkoutsResponse;
+
+                    data.Workouts.push(req.body.workout);
+
+                    await setDoc(doc(db, 'Workouts', req.body.userId), {
+                        ...data,
+                    })
+                        .then(() => {
+                            console.log('Document successfully written!');
+                            res.send('success');
+                        })
+                        .catch((error) => {
+                            console.error('Error writing document: ', error);
+                            res.status(500).send('error');
+                        });
                 } else {
                     res.status(404).send('Workout not found');
                 }
