@@ -13,15 +13,18 @@ import FirebaseController from './v1/controllers/FirebaseController';
 import LogsController from './v1/controllers/LogController';
 import WebSocketWrapper from './v1/WebSocket';
 import { urlParamsToArray } from './functions/func';
+import { log } from 'console';
 
 // Initialize Firebase
+log(firebaseConfig);
+
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT;
+const port = 8000;
 
 const wsServer = new ws.Server({ noServer: true });
 
